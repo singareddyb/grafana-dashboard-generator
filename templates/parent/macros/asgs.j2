@@ -1,0 +1,122 @@
+{% macro build_asg_subpanel(id, ycoord, asg_name, datasource, region, asgmetrics) -%}
+
+    {% set tmp_dct = {'ycoord': ycoord} %}
+    {% for metric in asgmetrics %}
+        {% if loop.index0 == 0 %}
+            {% do tmp_dct.update({'ycoord': tmp_dct['ycoord'] + 1}) %}
+        {% endif %}
+        {% if not loop.index0 == 0 and loop.index0 % 3 == 0 %}
+            {% do tmp_dct.update({'ycoord': tmp_dct['ycoord'] + 10}) %}
+        {% endif %}
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "{{ datasource }}",
+          "fill": 1,
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": {{ 8 * (loop.index0 % 3) }},
+            "y": {{ tmp_dct['ycoord'] }}
+          },
+          "id": {{ id + 1 + loop.index0 }},
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "minSpan": 8,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeatDirection": "h",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "dimensions": {
+                "AutoScalingGroupName": "{{ asg_name }}"
+              },
+              "metricName": "{{ metric['name'] }}",
+              "namespace": "{{ metric['namespace'] }}",
+              "period": "",
+              "refId": "A",
+              "region": "{{ region }}",
+              "statistics": [
+                "{{ metric['statistic'] }}"
+              ]
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "{{ metric['name'] }}",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "{{ metric['yunit'] }}",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "{{ metric['yunit'] }}",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }{% if not loop.last %},{% endif %}
+
+    {% endfor %}
+ 
+{%- endmacro %}
+
+{% macro build_asg_panel(id, ycoord, asg_name, datasource, region, asgmetrics) -%}
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": {{ ycoord }}
+      },
+      "id": {{ id }},
+      "panels": [
+        {{ build_asg_subpanel(id, ycoord, asg_name, datasource, region, asgmetrics) }} 
+      ],
+      "repeat": null,
+      "title": "AWS ASG {{ asg_name }} Stats",
+      "type": "row"
+    }
+ 
+{%- endmacro %}

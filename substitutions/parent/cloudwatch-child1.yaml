@@ -1,0 +1,51 @@
+substitutions:
+- {datasource: TestCloudWatchDatasource}
+- {region: us-east-1}
+- {custom_namespace: ''}
+- ec2metrics:
+  - {name: CPUCreditBalance, namespace: AWS/EC2, statistic: Average, yunit: short}
+  - {name: CPUCreditUsage, namespace: AWS/EC2, statistic: Average, yunit: short}
+  - {name: CPUUtilization, namespace: AWS/EC2, statistic: Average, yunit: percent}
+  - {name: DiskReadBytes, namespace: AWS/EC2, statistic: Average, yunit: bytes}
+  - {name: DiskWriteBytes, namespace: AWS/EC2, statistic: Average, yunit: bytes}
+  - {name: DiskReadOps, namespace: AWS/EC2, statistic: SampleCount, yunit: short}
+  - {name: DiskWriteOps, namespace: AWS/EC2, statistic: SampleCount, yunit: short}
+  - {name: NetworkIn, namespace: AWS/EC2, statistic: Average, yunit: bytes}
+  - {name: NetworkOut, namespace: AWS/EC2, statistic: Average, yunit: bytes}
+  - {name: NetworkPacketsIn, namespace: AWS/EC2, statistic: Average, yunit: bytes}
+  - {name: NetworkPacketsOut, namespace: AWS/EC2, statistic: Average, yunit: bytes}
+  - {name: StatusCheckFailed, namespace: AWS/EC2, statistic: SampleCount, yunit: short}
+- asgmetrics:
+  - {name: GroupInServiceInstances, namespace: AWS/AutoScaling, statistic: SampleCount, yunit: short}
+  - {name: GroupDesiredCapacity, namespace: AWS/AutoScaling, statistic: SampleCount, yunit: short}
+  - {name: GroupMaxSize, namespace: AWS/AutoScaling, statistic: Maximum, yunit: short}
+  - {name: GroupMinSize, namespace: AWS/AutoScaling, statistic: Minimum, yunit: short}
+  - {name: GroupTerminatingInstances, namespace: AWS/AutoScaling, statistic: Sum, yunit: short}
+  - {name: GroupTotalInstances, namespace: AWS/AutoScaling, statistic: Sum, yunit: short}
+  - {name: GroupPendingInstances, namespace: AWS/AutoScaling, statistic: Sum, yunit: short}
+  - {name: GroupStandbyInstances, namespace: AWS/AutoScaling, statistic: Sum, yunit: short}
+- elbmetrics:
+  - {name: HealthyHostCount, namespace: AWS/ELB, statistic: Average, yunit: short}
+  - {name: RequestCount, namespace: AWS/ELB, statistic: Sum, yunit: short}
+  - {name: BackendConnectionErrors, namespace: AWS/ELB, statistic: Sum, yunit: short}
+  - {name: UnHealthyHostCount, namespace: AWS/ELB, statistic: Average, yunit: short}
+  - {name: Latency, namespace: AWS/ELB, statistic: Average, yunit: short}
+  - {name: HTTPCode_ELB_2XX, namespace: AWS/ELB, statistic: Sum, yunit: short}
+  - {name: HTTPCode_ELB_4XX, namespace: AWS/ELB, statistic: Sum, yunit: short}
+  - {name: HTTPCode_ELB_5XX, namespace: AWS/ELB, statistic: Sum, yunit: short}
+  - {name: EstimatedALBActiveConnectionCount, namespace: AWS/ELB, statistic: Average, yunit: short}
+  - {name: EstimatedALBActiveConnectionCountTest, namespace: AWS/ELB, statistic: Average, yunit: short}
+- ecsmetrics:
+  - {name: CPUUtilization, namespace: AWS/ECS, statistic: Average, yunit: percent}
+  - {name: MemoryUtilization, namespace: AWS/ECS, statistic: Average, yunit: percent}
+- instance_ids: [i-0abc1234b81wabe]
+- asgs: [parent-ecs-cluster-child1-ECSAutoScalingGroup-ABCDEF]
+- elbs: [parent-elb1-child1-elb, parent-elb2-child1-elb, parent-elb3-child1-elb, parent-elb4-child1-elb, parent-elb5-child1-elb]
+- clusters:
+  - ecsservices:
+    - {name: parent-service1-child1-service}
+    - {name: parent-service2-child1-service}
+    - {name: parent-service3-child1-service}
+    - {name: parent-service4-child1-service}
+    - {name: parent-service5-child1-service}
+    name: parent-child1-ecs-cluster

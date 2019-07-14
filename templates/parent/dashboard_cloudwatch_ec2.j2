@@ -1,0 +1,60 @@
+{% import "macros/ec2.j2" as macros %}
+{
+  "dashboard": {
+  "description": "API Cloudwatch Dashboard EC2",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+      {% set len_ec2metrics = ec2metrics|length %}
+      {% set multiplier = 10 * (len_ec2metrics/3)|round(method='ceil')|int + 2 %}
+      {% for instance_id in instance_ids %}
+            {{ macros.build_ec2_panel(multiplier*loop.index0, multiplier*loop.index0, instance_id, datasource, region, ec2metrics) }}{% if not loop.last %},{% endif%}
+      {% endfor %}
+  ],
+  "refresh": "30s",
+  "schemaVersion": 16,
+  "style": "dark",
+  "tags": [
+    "public",
+    "{{ parent_name }}"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "API {{ parent_name }} {{ custom_namespace }} EC2 instances"
+},
+  "folderId": "{{ folder_id }}",
+  "overwrite": true
+}

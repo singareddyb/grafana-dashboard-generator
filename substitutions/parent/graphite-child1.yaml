@@ -1,0 +1,32 @@
+substitutions:
+- {datasource: Graphite}
+- {custom_namespace: ''}
+- dbs: [db1, db2, db3, db4, db5, db6, db7]
+- paneltypes:
+  - name: graph
+    pgsqlmetrics:
+      - { name: 'Network Transmit', xformat: 'time', yformat: 'short', sql: 'aliasByNode(servers.*.interface-ens{3,5}.if_octets.tx,1)' }
+      - { name: 'Network Recieve', xformat: 'time', yformat: 'short', sql: 'aliasByNode(servers.*.interface-ens{3,5}.if_octets.rx,1)' }
+      - { name: 'Write Rate', xformat: 'time', yformat: 'short', sql: 'aliasByNode(servers.*.disk-{xvdb,nvme0n1}.disk_octets.write,1)' }
+      - { name: 'Read Rate', xformat: 'time', yformat: 'short', sql: 'aliasByNode(servers.*.disk-{xvdb,nvme0n1}.disk_octets.read,1)' }
+      - { name: 'Disk Mount Free', xformat: 'time', yformat: 'short', sql: 'aliasByNode(servers.*.df-mnt-db.df_complex-free,1)' }
+      - { name: 'Disk Root Free', xformat: 'time', yformat: 'short', sql: 'aliasByNode(servers.*.df-root.df_complex-free,1)' }
+      - { name: 'Memory Used', xformat: 'time', yformat: 'short', sql: 'aliasByNode(servers.*.memory.memory-used,1)' }
+      - { name: 'CPU Used', xformat: 'time', yformat: 'short', sql: 'aliasByNode(servers.*.cpu-even-average.cpu-user,1)' }
+  - name: guage
+    pgsqlmetrics:
+      - { name: 'Connections', format: 'none', sql: 'sumSeries(servers.$$db_server$$.postgresql-localhost.pg_bkends-*)', thresholds: '500,800' }
+      - { name: 'ReadRate', format: 'bytes', sql: 'servers.$$db_server$$.disk-nvme0n1.disk_octets.read', thresholds: '' }
+      - { name: 'WriteRate', format: 'bytes', sql: 'servers.$$db_server$$.disk-nvme0n1.disk_octets.write', thresholds: '' }
+      - { name: 'Network Rx', format: 'Bps', sql: 'servers.$$db_server$$.interface-ens3.if_octets.rx', thresholds: '52528800,65536000' }
+      - { name: 'CPU Usage', format: 'percent', sql: 'servers.$$db_server$$.cpu-even-average.cpu-user', thresholds: '59,75' }
+      - { name: 'CPU Steal', format: 'percent', sql: 'servers.$$db_server$$.cpu-even-average.cpu-steal', thresholds: '5,10' }
+      - { name: 'Autovacuum Workers', format: 'none', sql: 'servers.$$db_server$$.postgresql-localhost.pg_autovacuums', thresholds: '2,3' }
+      - { name: 'Active Queries', format: 'none', sql: 'servers.$$db_server$$.postgresql-localhost.pg_connections.active', thresholds: '12,16' }
+      - { name: 'Longest Active Query', format: 's', sql: 'servers.$$db_server$$.postgresql-localhost.pg_query_length', thresholds: '300,1800' }
+      - { name: 'Waiting Queries', format: 'none', sql: 'servers.$$db_server$$.postgresql-localhost.pg_connections.locked', thresholds: '1,2' }
+      - { name: 'Longest Waiting Query', format: 's', sql: 'servers.$$db_server$$.postgresql-localhost.pg_wait_length', thresholds: '300,1800' }
+      - { name: 'Idle in Transaction', format: 'none', sql: 'servers.$$db_server$$.postgresql-localhost.pg_connections.idle_transaction', thresholds: '1,2' }
+      - { name: 'Root Mount Free space', format: 'bytes', sql: 'servers.$$db_server$$.df-root.df_complex-free', thresholds: '21474836480,42949672960' }
+      - { name: 'Mount Free Disk space', format: 'bytes', sql: 'servers.$$db_server$$.df-mnt-db.df_complex-free', thresholds: '53687091200,107374182400' }
+      - { name: 'Longest Autovaccuum', format: 's', sql: 'servers.$$db_server$$.postgresql-localhost.pg_autovacuum_length', thresholds: '300,500' }

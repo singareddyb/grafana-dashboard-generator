@@ -1,0 +1,214 @@
+{% macro build_pgsql_graph_panel(id, ycoord, db, datasource, pgsqlmetrics) -%}
+  {% set tmp_dct = {'ycoord': ycoord} %}
+    {% for metric in pgsqlmetrics %}
+      {% if loop.index0 == 0 %}
+        {% do tmp_dct.update({'ycoord': tmp_dct['ycoord'] + 1}) %}
+      {% endif %}
+      {% if not loop.index0 == 0 and loop.index0 % 3 == 0 %}
+        {% do tmp_dct.update({'ycoord': tmp_dct['ycoord'] + 10}) %}
+      {% endif %}
+     {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "fill": 1,
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": {{ (loop.index0 % 3) * 8 }} ,
+        "y": {{ tmp_dct['ycoord'] }}
+      },
+      "id": {{ id + loop.index0 + 1 }},
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "refId": "A",
+          "target": "{{ metric['sql'] }}",
+          "textEditor": true
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "{{ metric['name'] }}",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "{{ metric['xformat'] }}",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "{{ metric['yformat'] }}",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "{{ metric['yformat'] }}",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }{% if not loop.last %},{% endif %}
+
+  {% endfor %}
+ 
+{%- endmacro %}
+
+{% macro build_pgsql_guage_panel(id, ycoord, db, datasource, pgsqlmetrics) -%}
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": {{ ycoord }}
+      },
+      "id": {{ id }},
+      "panels": [
+        {{ build_pgsql_guage_subpanel(id, ycoord, db, datasource, pgsqlmetrics) }}
+      ],
+      "repeat": null,
+      "title": "{{ db }} Stats",
+      "type": "row"
+    }
+
+{%- endmacro %}
+
+
+{% macro build_pgsql_guage_subpanel(id, ycoord, db, datasource, pgsqlmetrics) %}
+
+
+  {% set tmp_dct = {'ycoord': ycoord} %}
+    {% for metric in pgsqlmetrics %}
+      {% if loop.index0 == 0 %}
+        {% do tmp_dct.update({'ycoord': tmp_dct['ycoord'] + 1}) %}
+      {% endif %}
+      {% if not loop.index0 == 0 and loop.index0 % 8 == 0 %}
+        {% do tmp_dct.update({'ycoord': tmp_dct['ycoord'] + 10}) %}
+      {% endif %}
+    {
+      "cacheTimeout": null,
+      "colorBackground": true,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "{{ datasource }}",
+      "decimals": 0,
+      "format": "{{ metric['format'] }}",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": {{ 3 * (loop.index0 % 8) }},
+        "y": {{ tmp_dct['ycoord'] }}
+      },
+      "id": {{ id + 1 + loop.index0 }},
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": true
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "refId": "A",
+          "target": "{{ metric['sql'] | replace('$$db_server$$', db) }}",
+          "textEditor": true
+        }
+      ],
+      "thresholds": "{{ metric['thresholds'] }}",
+      "title": "{{ metric['name'] }}",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    }{% if not loop.last %},{% endif %}
+
+    {% endfor %}
+
+{%- endmacro %}
+
+ 
